@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <title>Details</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+		 /* background */
+	  body {
+		background-image: url("earth.jpg");
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-attachment: fixed;
+	  }
+	   .content {
+		position: absolute;
+	  }
+	  h1 {
+		color: white;
+		size: 18px;
+		}
+		button.goBack {
+			background-color: yellow;
+			border: 3px solid #ccc;
+			border-radius: 6px;
+			color: black;
+			font-weight: bold;
+			padding: 10px 25px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 18px;
+			margin: 4px 2px;
+			opacity: 0.6;
+			transition: 0.3s;
+			cursor: pointer;
+		}
+		button.goBack:hover {opacity: 1}
+		.details {
+			color: white;
+			font-size: 2em;
+			font-family:"Comic Sans MS", cursive, sans-serif;
+		}
+		#json {
+			color: white;
+			
+		}
+		.gridView {
+			display: grid;
+			grid-template-columns: auto auto auto;
+			grid-gap: 10px;
+			background-color: none;
+			padding: 10px;
+			
+		}
+
+		.gridView > div {
+			background-color: white;
+			border: 3px solid black;
+			border-radius: 6px;
+			text-align: center;
+			opacity: 0.7;
+		}
+		.margin {
+			margin: 0px;
+			color: black;
+			font-weight: bold;
+			width:130px;
+			word-break: break-all;
+			padding: 10px;
+			text-align: center;
+		}
+		.sub {
+			color: #b7852e;
+		}
+		</style>
+    </head>
+    <body>
+		<div class="content">
+		<button onclick="window.location.href = './index.html';" class="goBack">Go Back</button>
+        <h1 class="details">Details of 
+            <span id="selectedCountry"></span>
+        </h1>
+        <div id="json">
+
+        </div>
+		<div class="gridView">
+			
+		 </div>
+		</div>
+    </body>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const country = urlParams.get('selectedCountry');
+        document.getElementById("selectedCountry").innerHTML = country;
+		let result = "";
+        fetch('https://restcountries.eu/rest/v2/name/'+country+"??fullText=true")
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            let countryDetail = data[0];
+			result += `<div class="gridView"> <div class="margin"> <div>${countryDetail.name}</div> <div class="sub">Country Name</div></div> <div class="margin"><div> ${countryDetail.nativeName}</div><div class="sub">Native Name</div></div><div class="margin"> <div>${countryDetail.numericCode} </div> <div class="sub">Numeric Code</div></div><div class="margin"> <div>${countryDetail.area} </div> <div class="sub">Area</div></div><div class="margin"> <div> ${countryDetail.callingCodes} </div> <div class="sub">Calling Codes</div></div><div class="margin"><div> ${countryDetail.capital} </div> <div class="sub">Capital</div></div><div class="margin"><div> ${countryDetail.cioc ? countryDetail.cioc : "-"} </div> <div class="sub">Cioc</div></div><div class="margin"> <div>${countryDetail.demonym}</div> <div class="sub">Demonym</div></div><div class="margin"> <div>${countryDetail.gini}</div> <div class="sub">Gini</div></div><div class="margin"> <div>${countryDetail.latlng}</div> <div class="sub">Latitude & Longitude</div></div><div class="margin"> <div>${countryDetail.name}</div> <div class="sub">Name</div></div><div class="margin"> <div>${countryDetail.nativeName}</div> <div class="sub">Native Name</div></div><div class="margin"> <div>${countryDetail.population}</div> <div class="sub">Population</div></div><div class="margin"> <div>${countryDetail.region}</div> <div class="sub">Region</div></div><div class="margin"> <div>${countryDetail.subregion}</div> <div class="sub">SubRegion</div></div><div class="margin"> <div>${countryDetail.timezones}</div> <div class="sub">Time Zones</div></div><div class="margin"> <div>${countryDetail.topLevelDomain}</div> <div class="sub">Top Level Domain</div></div><div class="margin"><div> ${countryDetail.altSpellings} </div> <div class="sub">Alt Spellings</div></div><div class="margin"> <div>${countryDetail.borders ? countryDetail.borders : "-,-"} </div> <div class="sub">Borders</div></div></div>`;
+			for(var i =0; i<countryDetail.currencies.length; i++){
+				result +=  `<div class="gridView"><div class="margin"> <div>${countryDetail.currencies[i].name}, ${countryDetail.currencies[i].symbol}, ${countryDetail.currencies[i].code}</div> <div class="sub">Currencies, Symbol, Code</div></div></div>`;
+			}
+			for(var i=0; i<countryDetail.languages.length; i++) {
+				result += `<div class="gridView"> <div class="margin"> <div>${countryDetail.languages[i].name}, ${countryDetail.languages[i].nativeName}, ${countryDetail.languages[i].iso639_1}, ${countryDetail.languages[i].iso639_2}</div> <div class="sub">Language Name, Native Name, Iso639_1, Iso639_2</div></div></div>`;
+			}
+			for(var i=0; i<countryDetail.regionalBlocs.length; i++) {				
+				result += `<div class="gridView"> <div class="margin"> <div>${countryDetail.regionalBlocs[i].acronym}, ${countryDetail.regionalBlocs[i].otherAcronyms}, ${countryDetail.regionalBlocs[i].name}, ${countryDetail.regionalBlocs[i].otherNames}</div> <div class="sub"> Acronym, Other Acronyms, Names, Other Names</div></div></div>`;
+			}
+			for(var i=0; i<countryDetail.translations.length; i++) {
+				result += `<div class="grid-container"> <div class="margin"> <div>${countryDetail.translations[i].de}, ${countryDetail.translations[i].es}, ${countryDetail.translations[i].fr}, ${countryDetail.translations[i].ja}, ${countryDetail.translations[i].it}, ${countryDetail.translations[i].br}</div> <div class="sub">Translations : de, es, fr, ja, it, br</div></div></div>`;
+			}
+			document.getElementById("json").innerHTML = result;
+		})
+        .catch(error => console.error(error))
+    </script>
+</html>

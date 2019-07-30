@@ -1,0 +1,124 @@
+<html>
+  <head>
+    <title>Country Explorer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+	/* flag style */
+      img.flag {
+        width: 100px;
+		border-radius: 8px;
+		float: right;
+		height: auto;
+      }
+	  /* background */
+	  body {
+		background-image: url("earth.jpg");
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-attachment: fixed;
+	  }
+	  /* Title- Country explorer */
+	  .appTitle {
+		color: white;
+		font-size: 3em;
+		font-family:"Comic Sans MS", cursive, sans-serif;
+	  }
+	  .content {
+		position: absolute;
+	  }
+	  /* Search bar */
+	input[type=text] {
+		width: 400px;
+		box-sizing: border-box;
+		border: 3px solid #ccc;
+		border-radius: 6px;
+		font-size: 20px;
+		background-color: white;
+		background-image: url('searchicon.png');
+		background-size: 30px;
+		background-position: 5px 5px; 
+		background-repeat: no-repeat;
+		padding: 14px 20px 14px 40px;
+		
+	}
+	/* Search button */
+	.button {
+		background-color: red;
+		border: 3px solid #ccc;
+		border-radius: 6px;
+		color: white;
+		font-weight: bold;
+		padding: 15px 32px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 20px;
+		margin: 6px 4px;
+		opacity: 0.6;
+		transition: 0.3s;
+		cursor: pointer;
+	}
+	.button:hover {opacity: 1}
+	.card {
+		padding: 10px;
+		border-radius: 6px;
+		margin: 0px 2px 3px 2px;
+		background: #fff;
+		height:65px;
+	}
+	a.flagname {
+		text-decoration: none;
+		font-size: 28px;
+	}
+
+    </style>
+  </head>
+  <body>
+  <div class="content">
+    <div class="appTitle">Country Explorer</div>
+	<br/>
+	<div class="searchBar">
+    <input type="text" id="countryName"/>
+    <button class="button" onclick="doSearch()" style="background-color:green">Search</button>
+	<button class="button" onclick="document.getElementById('countryName').value = ''">Reset</button>
+	</div>
+    <br/>
+    <br/>
+    <div id="searchResult">
+    </div>
+	
+	</div>
+  </body>
+  <script>
+    if(localStorage.getItem("queryTerm")) {
+      document.getElementById("countryName").value = localStorage.getItem("queryTerm")
+      doSearch()
+    }
+    function doSearch() {
+      var countryName = document.getElementById("countryName").value
+      console.log(countryName)
+      localStorage.setItem("queryTerm", countryName)
+
+      fetch('https://restcountries.eu/rest/v2/name/'+countryName)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+		if(data.status==404) {
+			document.getElementById("searchResult").innerHTML = `<h3 style="color: white"> No results found... Type a proper country name!</h3>`;
+			return
+		}
+        var htmlResult = "";
+		var clickflag="";
+		clickflag+=	`<div style="color: white"> Click on the flag to know more details about the country..!</div>`;
+		document.getElementById("searchResult").innerHTML = clickflag;
+        for(var i = 0; i< data.length; i++) {
+          console.log(data[i].name)
+          console.log(data[i].flag)
+          htmlResult += `<p class='card'><a href='./details.html?selectedCountry=${data[i].name}' class='flagname'><img src='${data[i].flag}' class='flag'/> ${data[i].name}</a></p>`
+        }
+        document.getElementById("searchResult").innerHTML = htmlResult;
+      })
+      .catch(error => console.error(error))
+    }
+  </script>
+</html>
